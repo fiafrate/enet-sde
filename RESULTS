@@ -1,6 +1,9 @@
 HARDWARE: AMD EPYC 9654 CPUs, 128 cores
 NUM SIM: 128*10*10
 
+
+SIMULATION BATCH 1: RHO = 0.8, ENET_MIX=0.1, 0.25, 0.5, 0.75
+
 --------------------------------------------
 
 CONFIG:
@@ -78,5 +81,11 @@ TIME:
 552.953200340271
 
 
+--------------------------------------------
+
+
+SIMULATION BATCH 2: RHO = 0.5, ENET_MIX=0.1, 0.25, 0.5, 0.75
+
+TBD
 
 
