@@ -2,6 +2,7 @@ HARDWARE: AMD EPYC 9654 CPUs, 128 cores
 NUM SIM: 128*10*10
 
 --------------------------------------------
+
 CONFIG:
 'n_var': 10, 
 'sigma_val': 1, 
@@ -11,7 +12,6 @@ CONFIG:
 'enet_mix':0.5, 
 'delta_pen':1,
 	
-	
 RESULT:
 lasso acc  lasso sel  enet acc  enet sel
 0.918736   0.451719   0.854339  0.752422
@@ -20,8 +20,8 @@ TIME:
 523.9080917835236
 
 
-
 --------------------------------------------
+
 CONFIG:
 'n_var': 10, 
 'sigma_val': 1, 
@@ -30,17 +30,17 @@ CONFIG:
 'samp_term': 50, 
 'enet_mix':0.25, 
 'delta_pen':1,
-	
-	
+		
 RESULT:
 lasso acc  lasso sel  enet acc  enet sel
-0.917494   0.453516  0.831571  0.811328
+0.916769   0.454062  0.831136  0.804141
 
 TIME:
-
+553.3372993469238
 
 
 --------------------------------------------
+
 CONFIG:
 'n_var': 10, 
 'sigma_val': 1, 
@@ -53,9 +53,30 @@ CONFIG:
 	
 RESULT:
 lasso acc  lasso sel  enet acc  enet sel
+0.920075   0.447813  0.880801  0.664922
+
+TIME:
+522.5
+
+
+--------------------------------------------
+
+CONFIG:
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.8,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix':0.1, 
+'delta_pen':1,
+	
+	
+RESULT:
+lasso acc  lasso sel  enet acc  enet sel
 
 
 TIME:
+
 
 
 
