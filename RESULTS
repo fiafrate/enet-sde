@@ -1,4 +1,5 @@
 HARDWARE: AMD EPYC 9654 CPUs, 128 cores
+NUM SIM: 128*10*10
 
 -------------------------------------------
 CONFIG:
