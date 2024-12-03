@@ -11,12 +11,18 @@ from pathos.multiprocessing import ProcessingPool as Pool
 import os 
 from scipy.linalg import sqrtm
 
-from multiprocess import Pool
-import dill
+import multiprocess
+from multiprocess import Pool, cpu_count
+#import dill
+
 
 # Ensure `dill` is set as the default serializer
-dill.settings['recurse'] = True
+#dill.settings['recurse'] = True
 
+# import sys
+# sys.setrecursionlimit(1000)
+
+import os
 
 
 
@@ -151,78 +157,79 @@ def wrapped_sim(args):
     return [sim_step(**arg) for arg in args]
 
 
+if __name__ == "__main__":
+    start_time = time()
 
-n_batch = 10
-batch_size = 2
-B = n_batch * batch_size
+    num_processes = int(os.getenv("SLURM_CPUS_PER_TASK", default=1))
 
-lacc = np.empty(B)
-lsel = np.empty(B)
-eacc = np.empty(B)
-esel = np.empty(B)
+    n_batch = 10*num_processes
+    batch_size = 10
+    B = n_batch * batch_size
 
-
-sim_config = {
-    'n_var': 10, 
-    'sigma_val': 1, 
-    'rho': 0.9,
-    'samp_delta':0.1, 
-    'samp_term': 50, 
-    'enet_mix':0.5, 
-    'delta_pen':1,
-}
+    lacc = np.empty(B)
+    lsel = np.empty(B)
+    eacc = np.empty(B)
+    esel = np.empty(B)
 
 
-# non parallelized for loop, n_batch and batch_size are not really used
-# for i in range(B):
-#     lacc[i], lsel[i], eacc[i], esel[i] = sim_step(est_opt=False, **sim_config)
-# #     if (i+1) % batch_size == 0 or i==0:
-# #         print(f"[{'='*((i+1)//batch_size):<50}] {int((i+1)/B*100)}% ", end='\r')
+    sim_config = {
+        'n_var': 10, 
+        'sigma_val': 1, 
+        'rho': 0.8,
+        'samp_delta':0.1, 
+        'samp_term': 50, 
+        'enet_mix':0.5, 
+        'delta_pen':1,
+    }
 
 
-with Pool() as executor:
-    results = list(executor.map(wrapped_sim, [[sim_config]*batch_size]*n_batch))
+    # non parallelized for loop, n_batch and batch_size are not really used
+    # for i in range(B):
+    #     lacc[i], lsel[i], eacc[i], esel[i] = sim_step(est_opt=False, **sim_config)
+    # #     if (i+1) % batch_size == 0 or i==0:
+    # #         print(f"[{'='*((i+1)//batch_size):<50}] {int((i+1)/B*100)}% ", end='\r')
 
-num_results = np.array([x for item in results for x in item])
+    print(num_processes)
+    #multiprocess.set_start_method("spawn")
+    with Pool(processes=num_processes) as executor:
+        results = list(executor.map(wrapped_sim, [[sim_config]*batch_size]*n_batch))
 
-lacc = num_results[:,0]
-lsel = num_results[:,1]
-eacc = num_results[:,2]
-esel = num_results[:,3]
+    num_results = np.array([x for item in results for x in item])
 
-# data_list = []
-# for i in range(B):
-#     data_list.append(results[i][0].sde.data.original_data)
+    lacc = num_results[:,0]
+    lsel = num_results[:,1]
+    eacc = num_results[:,2]
+    esel = num_results[:,3]
 
-
-
-print(pd.DataFrame({'lasso acc': [np.mean(lacc)], 'lasso sel': [np.mean(lsel)], 'enet acc': [np.mean(eacc)], 'enet sel': [np.mean(esel)]}))
-
-
-
-
-
-# TESTS:
-# INCREASE SIGMA: no
-# INCREASE RHO: no
-# REDUCE ENET_MIX: ok
+    # data_list = []
+    # for i in range(B):
+    #     data_list.append(results[i][0].sde.data.original_data)
 
 
 
-qmle, lasso, enet, truep2 = sim_step(ret_eval=False, **sim_config)
-
-# qmle.sde.plot()
-# for (k, v) in qmle.est.items():
-#     print(k, '  %.5f  ' % v, '  ', truep2.get(k))
+    print(pd.DataFrame({'lasso acc': [np.mean(lacc)], 'lasso sel': [np.mean(lsel)], 'enet acc': [np.mean(eacc)], 'enet sel': [np.mean(esel)]}))
 
 
+    # TESTS:
+    # INCREASE SIGMA: no
+    # INCREASE RHO: no
+    # REDUCE ENET_MIX: ok
 
-for k, v in lasso.coef(lasso.lambda_opt).items():
-    print(k, '  %.8f  ' % v, '  ', '  %.8f  ' % enet.coef(enet.lambda_opt).get(k), '  %.5f  ' % qmle.est.get(k), truep2.get(k))
 
+    # LOCAL TEST
+    # qmle, lasso, enet, truep2 = sim_step(ret_eval=False, **sim_config)
 
-# reg_par = ['alpha{0}'.format(i) for i in range(1,sim_config['n_var'])]
-# mod_eval(mod=lasso, truep=truep2, reg_par=reg_par)
-# mod_eval(mod=enet, truep=truep2, reg_par=reg_par)
-# for k, v in enet.coef(enet.lambda_opt).items():
-#     print(k, '  %.5f  ' % v, '  ', truep.get(k))
+    # qmle.sde.plot()
+    # for (k, v) in qmle.est.items():
+    #     print(k, '  %.5f  ' % v, '  ', truep2.get(k))
+
+    # for k, v in lasso.coef(lasso.lambda_opt).items():
+    #     print(k, '  %.8f  ' % v, '  ', '  %.8f  ' % enet.coef(enet.lambda_opt).get(k), '  %.5f  ' % qmle.est.get(k), truep2.get(k))
+
+    # reg_par = ['alpha{0}'.format(i) for i in range(1,sim_config['n_var'])]
+    # mod_eval(mod=lasso, truep=truep2, reg_par=reg_par)
+    # mod_eval(mod=enet, truep=truep2, reg_par=reg_par)
+    # for k, v in enet.coef(enet.lambda_opt).items():
+    #     print(k, '  %.5f  ' % v, '  ', truep.get(k))
+
+    print(time() - start_time)
