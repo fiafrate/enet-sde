@@ -1,0 +1,15 @@
+CONFIG:
+
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.8,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix':0.5, 
+'delta_pen':1,
+	
+	
+RESULT:
+
+lasso acc  lasso sel  enet acc  enet sel
+0.918736   0.451719   0.854339  0.752422
