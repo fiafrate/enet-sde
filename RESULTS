@@ -1,3 +1,4 @@
+
 CONFIG:
 'n_var': 10, 
 'sigma_val': 1, 
@@ -11,3 +12,6 @@ CONFIG:
 RESULT:
 lasso acc  lasso sel  enet acc  enet sel
 0.918736   0.451719   0.854339  0.752422
+
+TIME:
+523.9080917835236
