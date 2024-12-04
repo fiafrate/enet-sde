@@ -118,7 +118,7 @@ CONFIG:
 	
 RESULT:
 lasso acc  lasso sel  enet acc  enet sel
-0.95697   0.905469    0.879099  0.951719
+0.95697    0.905469    0.879099  0.951719
 
 TIME:
 444.1844720840454
@@ -164,11 +164,86 @@ TIME:
 444.10382199287415
 
 
+--------------------------------------------
+
+### SIMULATION BATCH 3: RHO = 0.9, ENET_MIX=0.1, 0.25, 0.5, 0.75
+
+CONFIG:
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.9,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix': 0.1, 
+'delta_pen':1,
+	
+	
+RESULT:
+lasso acc  lasso sel  enet acc  enet sel
+0.882715   0.120391   0.764381  0.645312
+
+TIME:
+667.516074180603
 
 
+--------------------------------------------
+
+CONFIG:
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.9,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix': 0.25, 
+'delta_pen':1,
+	
+	
+RESULT:
+lasso acc  lasso sel  enet acc  enet sel
+0.882525   0.118828  0.791398  0.557813
+
+TIME:
+666.9859788417816
 
 
+--------------------------------------------
 
+CONFIG:
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.9,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix': 0.5, 
+'delta_pen':1,
+	
+	
+RESULT:
+lasso acc  lasso sel  enet acc  enet sel
+0.882299   0.122656   0.81173   0.447891
+
+TIME:
+670.1690125465393
+
+
+--------------------------------------------
+
+CONFIG:
+'n_var': 10, 
+'sigma_val': 1, 
+'rho': 0.9,
+'samp_delta':0.1,
+'samp_term': 50, 
+'enet_mix': 0.75, 
+'delta_pen':1,
+	
+	
+RESULT:
+lasso acc  lasso sel  enet acc  enet sel
+0.882386   0.120938  0.838301   0.327266
+
+TIME:
+697.9395384788513
 
 
 
