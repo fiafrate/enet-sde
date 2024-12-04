@@ -19,7 +19,7 @@ from multiprocess import Pool, cpu_count
 # Ensure `dill` is set as the default serializer
 #dill.settings['recurse'] = True
 
-# import sys
+import sys
 # sys.setrecursionlimit(1000)
 
 import os
@@ -64,7 +64,7 @@ def sim_step(ret_eval=True, est_opt=True, n_var=5,
     #print(sde)
 
     # assign parameter values
-    alpha_val = [1]*((n_var-1)//2) + [0]*((n_var-1) - (n_var-1)//2) + [n_var]
+    alpha_val = [1/n_var]*((n_var-1)//2) + [0]*((n_var-1) - (n_var-1)//2) + [2]
     #alpha_val = [1]*(n_var)
     alpha_par = dict(zip([s.name for s in alpha[1:]], alpha_val))
 
@@ -160,7 +160,22 @@ def wrapped_sim(args):
 if __name__ == "__main__":
     start_time = time()
 
+    enet_mix = float(sys.argv[1])
+    n_var = int(sys.argv[2])
+    # enet_mix = 0.25
+    # n_var = 30
+    sim_config = {
+        'n_var': n_var, 
+        'sigma_val': 1, 
+        'rho': 0.9,
+        'samp_delta':0.1, 
+        'samp_term': 50, 
+        'enet_mix': enet_mix, 
+        'delta_pen':1,
+    }
+
     num_processes = int(os.getenv("SLURM_CPUS_PER_TASK", default=1))
+
 
     n_batch = 10*num_processes
     batch_size = 10
@@ -171,16 +186,8 @@ if __name__ == "__main__":
     eacc = np.empty(B)
     esel = np.empty(B)
 
-
-    sim_config = {
-        'n_var': 10, 
-        'sigma_val': 1, 
-        'rho': 0.8,
-        'samp_delta':0.1, 
-        'samp_term': 50, 
-        'enet_mix':0.5, 
-        'delta_pen':1,
-    }
+    
+    
 
 
     # non parallelized for loop, n_batch and batch_size are not really used
